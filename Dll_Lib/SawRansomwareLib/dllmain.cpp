@@ -21,7 +21,7 @@ EXTERN_C
         return GetLastError();
         return 0;
     }
-    _declspec(dllexport) int _cdecl DestroyWindows_SawRansomware() 
+    _declspec(dllexport) int _cdecl DestroyWindow_SawRansomware() 
     {
         hwnd = FindWindowA(NULL, "Saw Ransomware");
         DestroyWindow(hwnd);
