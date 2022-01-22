@@ -1,6 +1,5 @@
 #include <Windows.h>
 #include <debugapi.h>
-#pragma comment(lib,"ntdll.lib")
 
 typedef long (WINAPI* RtlSetProcessIsCritical) (
 	IN BOOLEAN    bNew,
@@ -11,7 +10,7 @@ int main()
 {
 	HANDLE ntdll = LoadLibrary((LPCWSTR)"ntdll.dll");
 	RtlSetProcessIsCritical SetCriticalProcess;
-	LoadLibraryA("ntdll");
+	LoadLibraryA("ntdll.dll");
 	SetCriticalProcess = (RtlSetProcessIsCritical)
     GetProcAddress((HINSTANCE)ntdll, "RtlSetProcessIsCritical");
 }
